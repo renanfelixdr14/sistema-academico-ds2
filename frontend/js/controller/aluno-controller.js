@@ -21,67 +21,43 @@ const AlunoController = {
      */
     iniciar() {
         
-        let continuar = true;
+        AlunoView.inicializar();
 
-        while (continuar) {
-
-            /**
-             * Solicita que a View leia os dados do usuário.
-             * lerDados() devolve um objeto com:
-             * - RA;
-             * - nome;
-             * - e-mail;
-             * - curso;
-             * - turma.
-             * 
-             * O controller não vai utilizar prompt diretamente.
-             */
-            const dados = AlunoView.lerDados();
-
-            /**
-             * Envia os Dados para o Model.
-             * devolve um objeto informado se a operação foi bem-sucedida.
-             */
-            const resultado = AlunoModel.cadastrar(dados);
-
-            // Verifica a propriedade de sucesso.
-            if (resultado.sucesso) {
-                //solicita que a View apresenta o aluno.
-                AlunoView.exibirAluno(resultado.aluno);
-            } else {
-                AlunoView.exibirErro(resultado.mensagem);
+        AlunoView.configurarFormulario(
+            function (dados) {
+                AlunoController.cadastrar(dados);
             }
+        );
+    AlunoController.atualizarVisualizacao();
+    },
 
-            continuar = AlunoView.perguntarNovoCadastro();
+    cadastrar(dados) {
+        
+        const resultado = AlunoModel.cadastrar(dados);
+        
+        if (!resultado.sucesso) {
+            AlunoView.exibirErro(resultado.mensagem);
+            return;
         }
 
-        const alunos = AlunoModel.Listar();
+        AlunoView.exibirSucesso (
+            `Aluno ${resultado.aluno.nome} cadastrado com sucesso.`
+        );
+
+        AlunoView.LimparFormulario();
+        AlunoController.atualizarVisualizacao();
+    },
+
+    atualizarVisualizacao() {
+        
+        const alunos = AlunoModel.listar();
+        
         AlunoView.exibirLista(alunos);
 
-        /**
-         * Converte alunos em JSON, não será aplicado filtro,
-         * quantidade de numeros na indentação, a indentação
-         * deixa o JSON mais fácil de ler.
-         */
-        const textoJson = JSON.stringify(alunos, null, 2);
+        const textoJson = JSON.stringify(aluno, null, 2);
 
-        /**
-         * Neste momento, textoJson é uma string.
-         * Ele não é mais um array que possa ser manipulado.
-         * diretamente como a lista original.
-         */
         AlunoView.exibirJson(textoJson);
-
-        /**
-         * Converte o texto JSON novamente em um valor JavaScript.
-         * 
-         * Como JSON foi criado a partir de um array,
-         * JSON.parse() produzirá um novo array de objetos.
-         */
-        const dadosRecuperados = JSON.parse(textoJson);
-        AlunoView.exibirDadosRecuperados(dadosRecuperados);
     }
 };
 
-// Sem isso o cadastro será executado
 AlunoController.iniciar();
