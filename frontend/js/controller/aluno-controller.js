@@ -28,7 +28,15 @@ const AlunoController = {
                 AlunoController.cadastrar(dados);
             }
         );
-    AlunoController.atualizarVisualizacao();
+
+        AlunoView.configurarBotaoLimpar(
+            function () {
+                AlunoController.limparDados();
+            }
+        );
+
+        //apresenta dados já armazenados.
+        AlunoController.atualizarVisualizacao();
     },
 
     cadastrar(dados) {
@@ -45,6 +53,30 @@ const AlunoController = {
         );
 
         AlunoView.LimparFormulario();
+        AlunoController.atualizarVisualizacao();
+    },
+
+    limparDados() {
+        const alunos = AlunoService.listar();
+
+        if (alunos.length === 0) {
+            AlunoView.exibirErro(
+                "Não existem alunos para remover."
+            );
+            return;
+        }
+
+        const confirmou = AlunoView.confirmarLimpeza();
+
+        if (!confirmou) {
+            return;
+        }
+
+        AlunoService.limpar();
+        AlunoView.exibirSucesso(
+            "Todos os alunos foram removidos."
+        );
+
         AlunoController.atualizarVisualizacao();
     },
 
