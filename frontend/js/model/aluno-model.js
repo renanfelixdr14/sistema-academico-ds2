@@ -31,27 +31,29 @@ const AlunoModel = {
         );
     },
 
-    // realiza cadastro dos alunos.
-    /*
-    * o paramentro dados deverá ser um objeto com:
-    * - ra;
-    * - nome;
-    * - email;
-    * - curso;
-    * - turma;
-    * 
-    */
-    cadastrar(dados) {
+    gerarProximoId(alunos) {
+        if (alunos.length === 0) {
+            return 1;
+        }
+
+        const ids = alunos.map(
+            aluno => aluno.id
+        );
+
+        // feito pra encontrar o maior id usando (...)
+        // para entregar o todos os numeros o Math.max().
+        const maiorId = Math.max(...ids);
+
+        return maiorId + 1;
+    },
+
+    criar(dados, alunos) {
         const ra = AlunoModel.normalizarTexto(dados.ra);
         const nome = AlunoModel.normalizarTexto(dados.nome);
         const email = AlunoModel.normalizarTexto(dados.email);
         const curso = AlunoModel.normalizarTexto(dados.curso);
         const turma = AlunoModel.normalizarTexto(dados.turma);
 
-        /* 
-        * Verifica se algum campo obrigatório está vazio
-        * basta que uma das condições seja verdadeira para cadastro recusado.
-        */
         if (
             ra === "" ||
             nome === "" ||
@@ -65,15 +67,13 @@ const AlunoModel = {
             };
         }
 
-        // quando o email for considerado invalido retorna o erro.
-        if (!AlunoModel.validarEmail(email)) {
+         if (!AlunoModel.validarEmail(email)) {
             return {
                 sucesso: false,
                 mensagem: "Informe um e-mail válido."
             };
         }
 
-        // Se ja existir o RA, o objeto vai ser devolvido o cadastro duplicado será impedido.
         if(AlunoModel.localizarPorRa(ra)) {
             return {
                 sucesso: false,
@@ -81,10 +81,9 @@ const AlunoModel = {
             }
         }
 
-        // Se as validações forem completas, cria o objeto aluno.
         const aluno = {
             // nesta versão, o id e calculado a quantidade de alunos + 1. mais tarde será o banco que fara isso.
-            id: AlunoModel.alunos.length + 1,
+            id: AlunoModel.gerarProximoId(alunos),
             ra: ra,
             nome: nome,
             email: email,
@@ -93,26 +92,9 @@ const AlunoModel = {
             // todo aluno começa com ativo, no futuro esse valor poderá ser alterado.
             ativo: true
         };
-
-        // adiciona o aluno ao final do array, o aluno faz parte dos dados mantidos pelo Model.
-        AlunoModel.alunos.push(aluno);
-
-        // devolve cadastro foi concluido com sucesso.
-        return {
+        return{
             sucesso: true,
             aluno: aluno
         };
-    },
-
-    /*
-    * Devolve a lista de alunos cadastrados.
-    *
-    * O operador spread (...) cria um novo array contendo os mesmos alunos.
-    * Assim, não devolvemos diretamente o array original armazenado dentro do Model.
-    * 
-    */
-    Listar() {
-        return [...AlunoModel.alunos];
     }
-
 };
