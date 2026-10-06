@@ -10,6 +10,20 @@ body {
     color: #1f2937;
 }
 
+.acoes-formulario {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.botao-secundario {
+    background-color: #64748b;
+}
+
+.botao-secundario:hover {
+    background-color: #475569;
+}
+
 .container {
     width: min(92%, 1100px);
     margin: 0 auto;
