@@ -15,114 +15,125 @@
 */
 
 const AlunoView = {
+    // evita repetir varias vezes getElementById()
+    elementos: {},
+    inicializar() {
+        AlunoView.elementos.formulario =
+            document.getElementById("form-aluno");
 
-    /*
-    * Solicita os dados ao usuário necessarios para ir para o model.
-    * 
-    * Cada chamada de prompt() apresenta uma caixa de entrada e devolve
-    * o valor digitado pelo usuário.
-    * 
-    */
+        AlunoView.elementos.formulario =
+            document.getElementById("ra");
+
+        AlunoView.elementos.formulario =
+            document.getElementById("nome");
+
+        AlunoView.elementos.formulario =
+            document.getElementById("email");
+
+        AlunoView.elementos.formulario =
+            document.getElementById("curso");
+
+        AlunoView.elementos.formulario =
+            document.getElementById("turma");
+
+        AlunoView.elementos.formulario =
+            document.getElementById("mensagem");
+
+        AlunoView.elementos.formulario =
+            document.getElementById("corpo-tabela-alunos");
+
+        AlunoView.elementos.formulario =
+            document.getElementById("total-alunos");
+
+        AlunoView.elementos.formulario =
+            document.getElementById("saida-json");
+
+    },
+
+    configurarFormulario(aoEnviar) {
+        AlunoView.elementos.formulario.addEventListener(
+            "submit",
+            function (evento) {
+                // impede comportamento padrão, no caso recarrgar a pagina
+                evento.preventDefault();
+                const dados = AlunoView.lerDados();
+                aoEnviar(dados);
+            }
+        );
+    },
+
    lerDados() {
     return {
-        ra: prompt("Digite o RA do aluno:"),
-        nome: prompt("Digite o Nome do aluno:"),
-        email: prompt("Digite o e-mail do aluno:"),
-        curso: prompt("Digite o curso do aluno:"),
-        turma: prompt("Digite a turma do aluno:")
+        ra: AlunoView.elementos.ra.value,
+        nome: AlunoView.elementos.nome.value,
+        email: AlunoView.elementos.email.value,
+        curso: AlunoView.elementos.curso.value,
+        turma: AlunoView.elementos.turma.value
     };
    },
 
-   /*
-   * Apresenta se o aluno foi cadastrado com sucesso.
-   * O parâmetro aluno recee o objeto criado pelo Model e ecaminhado pelo Controller.
-   * 
-   */
-   exibirAluno(aluno) {
-    
-    // Apresenta uma mensagem simples no console.
-    console.log("Aluno cadastrado com sucesso.");
-    /*
-    * console.table() apresenta os dados em tabela
-    * facilitando a leitura dos dados.
-    */
-    console.table(aluno);
+   exibirSucesso(mensagem) {
+    AlunoView.elementos.mensagem.textContent = mensagem;
+    AlunoView.elementos.mensagem.className =
+        "mensagem sucesso";
    },
 
-   /*
-   * Apresenta mensagem de erro.
-   *
-   * A View não descobre nem cria o erro.
-   * Ela apenas apresenta a mensagem recebida.
-   * 
-   * A Mensagem vai ser mandada pelo controller, depois do Model validar.
-   */
    exibirErro(mensagem) {
-    
-    /*
-    * console.error() apresenta a mensagem como erro,
-    * dependendo do navegador a mensagem poderá aparecer em vermelho
-    * ou acompanhada de um ícone de alerta.
-    */
-    console.error("Erro:", mensagem);
+    AlunoView.elementos.mensagem.textContent = mensagem;
+    AlunoView.elementos.mensagem.className = 
+        "mensagem erro";
+   },
+   
+   LimparFormulario() {
+    AlunoView.elementos.formulario.reset();
+    AlunoView.elementos.ra.focus();
    },
 
-   /* 
-    Perguntar se o usuário deseja realizar outro cadastro
-
-    Confirm(), Esse valor será utilizado pelo Controller para decidir
-    se o processo de cadastro deverá continuar.
-   */
-   perguntarNovoCadastro() {
-    return confirm("Deseja cadastrar outro aluno?");
-   },
-
-   // o parâmetro alunos deverá receber um array.
    exibirLista(alunos) {
+    const corpoTabela = AlunoView.elementos.corpoTabela;
+    corpoTabela.textContent = "";
+    AlunoView.elementos.totalAlunos.textContent = 
+        `Total: ${alunos.lenght}`;
 
-        // O lenght informa a quantidade de elementos existentes no array.
-        console.log(
-            "Quantidade de alunos cadastrados:",
-            alunos.length
-        );
-        
-        // verifica se o array está vazio, se 0 nenhum está cadastrado.
-        if (alunos.lenght === 0) {
-            console.log("Nenhum aluno foi cadastrado.");
-            // utiliza aqui para o console.table() não é executado sem cadastros.
-            return;
-        }
+    if (alunos.lenght === 0) {
+        const linha = document.createElement("tr");
+        const celula = document.createElement("td");
 
-        // se o array possuir cadastros, apresenta o registros em tabela.
-        console.table(alunos);
-   },
+        celula.colSpan = 7;
+        celula.textContent = 
+            "Nenhum aluno foi cadastrado.";
 
-   // Apresenta os alunos convertidos para o formato Json
-   // O parâmetro textoJson recebe uma string criada anteriormente por JSON.stringify().
-   exibirJson(textoJson) {
-    console.log("Alunos em formato JSON:");
+        linha.appendChild(celula);
+        corpoTabela.appendChild(linha);
 
-    /**
-     * Neste momento, o conteúdo apresentado é texto, Ele não
-     * é mais um array que possa ser manipulado diretamente
-     * pelo JavaScript.
-     */
-    console.log(textoJson);
-   },
-
-   /**
-    * Apresenta os dados reconstruídos com JSON.parse().
-    * 
-    * Depois da conversão, os textos JSON voltam a ser valores JavaScript.
-    * 
-    */
-    exibirDadosRecuperados(dados) {
-        console.log("Dados reconstruídos com JSON.parse():");
-
-        /**
-         * Como dados voltaram a ser uma array de objetos,
-         * podemos apresentá-lo com console.table().
-         */
-        console.table(dados);
+        return;
     }
+
+    alunos.forEach(
+        function (aluno) {
+            const linha = document.createElement("tr");
+            const valores = [
+                aluno.id,
+                aluno.ra,
+                aluno.nome,
+                aluno.email,
+                aluno.curso,
+                aluno.turma,
+                aluno.ativo ? "Ativo" : "Inativo"
+            ];
+
+            valores.forEach(
+                function (valor) {
+                    const celula = document.createElement("td");
+                    celula.textContent = valor;
+                    linha.appendChild(celula);
+                });
+
+                corpoTabela.appendChild(linha);
+        });
+   },
+
+   exibirJson(textoJson) {
+    AlunoView.elementos.saidaJson.textContent = textoJson;
+   }
 };
