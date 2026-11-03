@@ -10,6 +10,10 @@ body {
     color: #1f2937;
 }
 
+h1 {
+    color: white;
+}
+
 .acoes-formulario {
     display: flex;
     flex-wrap: wrap;
@@ -166,4 +170,21 @@ pre {
         align-items: flex-start;
         flex-direction: column;
     }
+}
+
+button:desabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.mensagem.informacao {
+    color: #1d4ed8;
+}
+
+.mensagem.sucesso {
+    color: #15803d
+}
+
+.mensagem.erro {
+    color:#b91c1c
 }

@@ -1,70 +1,97 @@
 /**
  * SERVICE DE ALUNOS
  * 
- * O service coordena a utilização do Model e a persistência dos dados.
- * Nesta versão, a persistência utiliza localStorage.
+ * o Service vai ser responsavel pela comunicação do front com a Api
  * 
- * Em uma versão futura, este arquivo utilizará fetch()
- * para se comunicar com a API.
+ * O controller não precisa conhecer os detalhes do fetch(),
+ * dos cabeçalos ouda conversão em JSON().
  */
 const AlunoService = {
-    // Nome para armazenar no localStore.
-    CHAVE_STORAGE: "sistema-academico-ds2:alunos",
+    // Endereço base dos endpoints do alunos.
+    URL_API: "http://localost:3000/api/alunos",
 
-    //recupera os alunos armazenados.
-    listar() {
-        const textoJson = localStorage.getItem (
-            AlunoService.CHAVE_STORAGE
-        );
-
-        if (textoJson === null) {
-            return [];
-        }
-
+    //processa uma resposta recebida da Api.
+    async processarResposta(resposta) {
+        let resultado;
         try {
-            const dados = JSON.parse(textoJson);
-            if (!Array.isArray(dados)) {
-                return [];
-            }
-            return dados;
-        } catch (erro) {
-            //se estiver corrompido remove o valor inválido.
-            localStorage.removeItem(
-                AlunoService.CHAVE_STORAGE
+            // convert um Json recebido em
+            // um objeto Javascript válida
+            resultado = await resposta.json();
+        } catch(erro) {
+            throw new Error (
+                "O servidor retornou resposta inválida."
             );
-
-            return [];
-        }
-    },
-
-    salvar(alunos) {
-        const textoJson = JSON.stringify(alunos);
-
-        localStorage.setItem(
-            AlunoService.CHAVE_STORAGE,
-            textoJson
-        );
-    },
-
-    cadastrar(dados) {
-
-        const alunos = AlunoService.listar();
-        const resultado = AlunoModel.criar(
-            dados,alunos
-        );
-
-        if(!resultado.sucesso) {
-            return resultado;
         }
 
-        alunos.push(resultado.aluno);
-        AlunoService.salvar(alunos);
+        // A propriedade ok será verdadeira ára respostas entre 200 e 299.
+        if (!resposta.ok) {
+            // utiliza a mensagem enviada pela API.
+            // se ela não existir, utiliza uma mensagem genérica.
+            throw new Error(
+                resultado.mensagem ||
+                "Não foi possivel concluir a operação."
+            );
+        }
+
+        // Devolve JavaScript para quem chamou.
         return resultado;
     },
 
-    limpar() {
-        localStorage.removeItem(
-            AlunoService.CHAVE_STORAGE
-        );
+    // Executa uma requisição e trata possíveis problemas de conexão
+    //com o backend.
+    async requisitar(opcoes = {}) {
+        let resposta;
+
+        try {
+            /**
+             * o fetch() envia a requisição para a API.
+             * 
+             * O segundo argumento contém as opções,
+             * como método, cabeçalhos e corpo.
+             */
+            resposta = await fetch(
+                AlunoService.URL_API,
+                opcoes
+            );
+        } catch(erro) {
+            // executa quando não for possível estabelecer comunicação.
+            throw new Error(
+                "Não foi possível conectar ao servidor."
+            );
+        }
+        return AlunoService.processarResposta(resposta);
+    },
+
+    /**
+     * Solicita a lista de Alunos.
+     * 
+     * Como GET é o método padrao de fetch(),
+     * poderiamos omitir a propriedade method.
+     * Ela foi mantida para deixar o código explícito.
+     */
+    async listar() {
+        const resultado = await AlunoService.requisitar({
+            method: "GET",
+            // informa que o cliente espera receber JSON.
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+
+        // O service retorna somente o array.
+        return resultado.dados;
+    },
+
+    // Envia os dados de um novo aluno para a API.
+    async cadastrar(aluno) {
+        return AlunoService.requisitar({
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            // convert o objeto JavaScript para texto JSON.
+            body: JSON.stringify(aluno)
+        });
     }
 };

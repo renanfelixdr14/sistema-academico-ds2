@@ -1,17 +1,14 @@
 /*
-* Model de Alunos
+* Agora a Model vai ser exclusivamente para conversar com a Api
 *
-* O Model é responsável:
-* - pelos dados dos alunos;
-* - pelas validações;
-* - pelas regras do cadastro.
+* A validação do frontend melhora a experiencia do usuário, mas não
+* subistitui a validação do backend.
 */
 const AlunoModel = {
     
-    alunos: [],
-    
     // padroniza o valor antes de utilizar, se o valor for null ou undifined devolve vazia.
     normalizarTexto(valor) {
+        //se valor não encontrado retorna null
         if(valor === null || valor === undefined) {
             return "";
         }
@@ -24,77 +21,44 @@ const AlunoModel = {
         return email.includes("@") && email.includes(".");
     },
 
-    // Procura o aluno pela RA, se encontrar, devolve o objeto aluno, se não devolve undefined.
-    localizarPorRa(ra) {
-        return AlunoModel.alunos.find(
-            aluno => aluno.ra === ra
-        );
-    },
+    validar(dados) {
+     // Cria um novo objeto com os valores normalizados.
+     const aluno = {
+        ra: AlunoModel.normalizarTexto(dados.ra),
+        nome: AlunoModel.normalizarTexto(dados.nome),
+        // para email vamos deixar com letras minusculas.
+        email: AlunoModel
+            .normalizarTexto(dados.email)
+            .toLowerCase(),
+        curso: AlunoModel.normalizarTexto(dados.curso),
+        turma: AlunoModel.normalizarTexto(dados.turma)
+     };
 
-    gerarProximoId(alunos) {
-        if (alunos.length === 0) {
-            return 1;
-        }
-
-        const ids = alunos.map(
-            aluno => aluno.id
-        );
-
-        // feito pra encontrar o maior id usando (...)
-        // para entregar o todos os numeros o Math.max().
-        const maiorId = Math.max(...ids);
-
-        return maiorId + 1;
-    },
-
-    criar(dados, alunos) {
-        const ra = AlunoModel.normalizarTexto(dados.ra);
-        const nome = AlunoModel.normalizarTexto(dados.nome);
-        const email = AlunoModel.normalizarTexto(dados.email);
-        const curso = AlunoModel.normalizarTexto(dados.curso);
-        const turma = AlunoModel.normalizarTexto(dados.turma);
-
-        if (
-            ra === "" ||
-            nome === "" ||
-            email === "" ||
-            curso === "" ||
-            turma === ""
-        ) {
-            return {
-                sucesso: false,
-                mensagem: "Todos os campos são obrigatórios."
-            };
-        }
-
-         if (!AlunoModel.validarEmail(email)) {
-            return {
-                sucesso: false,
-                mensagem: "Informe um e-mail válido."
-            };
-        }
-
-        if(AlunoModel.localizarPorRa(ra)) {
-            return {
-                sucesso: false,
-                mensagem: "Já existe um aluno com esse RA."
-            }
-        }
-
-        const aluno = {
-            // nesta versão, o id e calculado a quantidade de alunos + 1. mais tarde será o banco que fara isso.
-            id: AlunoModel.gerarProximoId(alunos),
-            ra: ra,
-            nome: nome,
-            email: email,
-            curso: curso,
-            turma: turma,
-            // todo aluno começa com ativo, no futuro esse valor poderá ser alterado.
-            ativo: true
+     if (
+        aluno.ra === "" ||
+        aluno.nome === "" ||
+        aluno.email === "" ||
+        aluno.curso === "" ||
+        aluno.turma === "" 
+     ) {
+        return {
+            sucesso: false,
+            mensagem: "Todos os campos são obrigatórios."
         };
-        return{
-            sucesso: true,
-            aluno: aluno
+     }
+
+     // verifica o formato inicial do e-mail.
+     if (!AlunoModel.validarEmail(aluno.email)) {
+        return {
+            sucesso: false,
+            mensagem: "Informe um e-mail válido."
         };
+     }
+
+     // se os dados forem validos devolveremos true
+     return {
+        sucesso: true,
+        dados: aluno
+     };
     }
 };
