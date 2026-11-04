@@ -8,7 +8,7 @@
  */
 const AlunoService = {
     // Endereço base dos endpoints do alunos.
-    URL_API: "http://localost:3000/api/alunos",
+    URL_API: "http://localhost:3000/api/alunos",
 
     //processa uma resposta recebida da Api.
     async processarResposta(resposta) {

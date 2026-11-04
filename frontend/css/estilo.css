@@ -10,9 +10,7 @@ body {
     color: #1f2937;
 }
 
-h1 {
-    color: white;
-}
+
 
 .acoes-formulario {
     display: flex;
@@ -36,6 +34,7 @@ h1 {
 .cabecalho {
     padding: 28px 0;
     background-color: #0f3d66;
+    color: white;
 }
 
 .cabecalho h1 {margin: 0;}

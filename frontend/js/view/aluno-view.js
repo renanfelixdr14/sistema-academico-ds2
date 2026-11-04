@@ -37,7 +37,7 @@ const AlunoView = {
             document.querySelector("#corpo-tabela-alunos");
 
         AlunoView.elementos.saidaJson =
-            document.querySelector("saida-json");
+            document.querySelector("#saida-json");
 
         AlunoView.elementos.botaoSalvar =
             document.querySelector("#botao-salvar");
@@ -86,7 +86,7 @@ const AlunoView = {
          * se o array estiver vazio, cria uma linha 
          * informando que não existem alunos.
          */
-        if (alunos.lenght === 0) {
+        if (alunos.length === 0) {
             const linha = document.createElement("tr");
             const celula = document.createElement("td");
 

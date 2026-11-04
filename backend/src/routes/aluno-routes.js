@@ -1,40 +1,34 @@
+import express from "express";
 import AlunoController from "../controller/aluno-controller.js";
-import {
-    enviarJson,
-    enviarSemConteudo
-} from "../util/https.js";
 
-export async function tratarRotas(req, res) {
+/**
+ * Cria um roteador específico para alunos.
+ * 
+ * Um Router pode ser entendido como um 
+ * pequeno modulo de rotas.
+ */
+const router = express.Router();
 
-    const url = new URL (
-        req.url,
-        `http://${req.headers.host || "localhost"}`
-    );
+/**
+ * Rota de listagem.
+ * Como o Router será registrado no caminho
+ * /api/alunos, esta rota representará:
+ * GET /api/alunos
+ */
+router.get(
+    "/",
+    AlunoController.listar
+);
 
-    const caminho = url.pathname;
-    const metodo = req.method;
+/**
+ * Rota de cadastro.
+ * Esta rota representará:
+ * POST /api/alunos
+ */
+router.post(
+    "/",
+    AlunoController.cadastrar
+);
 
-    if (metodo === "OPTIONS") {
-        enviarSemConteudo(res);
-        return true;
-    }
-
-    if (metodo === "GET" && caminho === "/api/health") {
-        enviarJson(res, 200, {
-            status: "ok",
-            mensagem: "Servidor funcionando."
-        });
-        return true;
-    }
-
-    if (metodo === "GET" && caminho === "/api/alunos") {
-        await AlunoController.listar(req, res);
-        return true;
-    }
-
-    if (metodo === "POST" && caminho === "/api/alunos") {
-        await AlunoController.cadastrar(req, res);
-        return true;
-    }
-    return false;
-}
+// Exporta o Router para o app.js
+export default router;
