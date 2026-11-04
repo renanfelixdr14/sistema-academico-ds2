@@ -1,0 +1,129 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: Sistema Acadêmico DS II
+meta:
+  id: wrk_e771ab0d993b4aa79d76af7ebe5c002a
+  created: 1791915430155
+  modified: 1792778731036
+  description: ""
+collection:
+  - name: 01 - Sistema
+    meta:
+      id: fld_ba75fcdba85548779e36043216d44728
+      created: 1793739297761
+      modified: 1793739297761
+      sortKey: -1793739297761
+      description: ""
+    children:
+      - url: "{{ _[''].base_url }}/api/health"
+        name: Verificar servidor
+        meta:
+          id: req_b909721f7e5e4084a006ac542a576b34
+          created: 1793739470513
+          modified: 1793740385107
+          isPrivate: false
+          description: ""
+          sortKey: -1793739470513
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: 02 - Alunos
+    meta:
+      id: fld_22d699a3d20f426cb45ef8e46d0eb7cc
+      created: 1793739314444
+      modified: 1793739314444
+      sortKey: -1793739314444
+      description: ""
+    children:
+      - url: "{{ _[''].base_url }}/api/alunos"
+        name: Listando alunos
+        meta:
+          id: req_24b5a031952740cc865d266ec395ce58
+          created: 1793740492445
+          modified: 1793740530389
+          isPrivate: false
+          description: ""
+          sortKey: -1793740492445
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _[''].base_url }}/api/alunos"
+        name: Cadastrar aluno
+        meta:
+          id: req_770062bb2dfc4ec98971e17bf752f164
+          created: 1793740553563
+          modified: 1793754621084
+          isPrivate: false
+          description: ""
+          sortKey: -1793740553563
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"ra": "2026002",
+            	"nome": "Evidencia",
+            	"email": "evidencia@gmail.com",
+            	"curso": "SI",
+            	"turma": "5 semestre"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: 03 - Autentificação
+    meta:
+      id: fld_cc9deec6c83141cfbd0da39e21eea77c
+      created: 1793739336186
+      modified: 1793739336186
+      sortKey: -1793739336186
+      description: ""
+  - name: 04 - Disciplinas
+    meta:
+      id: fld_8bbd3c2f956143d8a6983a48171bd647
+      created: 1793739354097
+      modified: 1793739354097
+      sortKey: -1793739354097
+      description: ""
+  - name: 05 - Notas
+    meta:
+      id: fld_078ec03302ee421ba9aa520c1a16a83e
+      created: 1793739368656
+      modified: 1793739368656
+      sortKey: -1793739368656
+      description: ""
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_49e13ceb22832e8614a5dc1bfef9f03b082e66f1
+    created: 1792778731088
+    modified: 1792778731088
+environments:
+  name: Base Environment
+  meta:
+    id: env_49e13ceb22832e8614a5dc1bfef9f03b082e66f1
+    created: 1791915430158
+    modified: 1793740370083
+    isPrivate: false
+  data:
+    "":
+      base_url: http://localhost:3000
